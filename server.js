@@ -178,8 +178,8 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && url.pathname === '/health') {
       return sendJson(res, 200, { ok: true, service: 'vinguard', version: '1.0.0' });
     }
-    if (req.method === 'POST' && url.pathname === '/agent') return handleAgent(req, res);
-    if (req.method === 'POST' && url.pathname === '/demo') return handleDemo(req, res);
+    if (req.method === 'POST' && (url.pathname === '/agent' || url.pathname === '/api/agent')) return handleAgent(req, res);
+    if (req.method === 'POST' && (url.pathname === '/demo' || url.pathname === '/api/demo')) return handleDemo(req, res);
     return sendJson(res, 404, { error: 'not found', endpoints: ['GET /', 'GET /health', 'POST /agent', 'POST /demo'] });
   } catch (e) {
     return sendJson(res, 500, { error: e.message || 'internal error' });
@@ -192,4 +192,9 @@ if (require.main === module) {
   });
 }
 
-module.exports = { server, SAMPLES, DEMO_PAGE };
+// Vercel treats a root server.js as the deployment entrypoint and requires
+// the default export to be a function or a server — so the server itself is
+// the default export, with SAMPLES / DEMO_PAGE attached for api/index.js.
+module.exports = server;
+module.exports.SAMPLES = SAMPLES;
+module.exports.DEMO_PAGE = DEMO_PAGE;
