@@ -13,7 +13,7 @@ const PORT = 3456;
 
 process.env.AGENT_GAMES_HMAC_SECRET = TEST_SECRET;
 process.env.PORT = String(PORT);
-const { server } = require('../server');
+const server = require('../server'); // server.js default-exports the http.Server
 const { signHex, verifyHex } = require('../src/hmac');
 
 function post(path, bodyObj, sign) {
